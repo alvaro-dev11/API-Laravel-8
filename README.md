@@ -10,3 +10,5 @@
 ## Comandos usados
 - php artisan make:model Client -mcr
 - php artisan make:model Service -mcr
+- php artisan make:migration create_clients_services_table
+- php artisan make:migration create_roles_table
