@@ -13,8 +13,14 @@ class CreateClientsServicesTable extends Migration
      */
     public function up()
     {
+        // Tabla pivote, relaciona dos tablas de muchos a muchos
+        // 3. Crear las llaves foraneas
         Schema::create('clients_services', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('client_id');
+            $table->foreign('client_id')->references('id')->on('clients');
+            $table->unsignedBigInteger('service_id');
+            $table->foreign('service_id')->references('id')->on('services');
             $table->timestamps();
         });
     }

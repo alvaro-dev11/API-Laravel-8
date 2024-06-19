@@ -13,8 +13,13 @@ class CreateClientsTable extends Migration
      */
     public function up()
     {
+        // 1. Configurar tabla clients
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->timestamps();
         });
     }
