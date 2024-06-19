@@ -4,82 +4,133 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ServiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $services = Service::all();
+
+        if ($services->isEmpty()) {
+            $data = [
+                'message' => 'No se encontraron servicios',
+                'status' => 200
+            ];
+
+            return response()->json($data, 200);
+        }
+
+        // Crear la respuesta en una variable $data
+        $data = [
+            'services' => $services,
+            'status' => 200
+        ];
+
+        // Devolver la respuesta en formato JSON
+        return response()->json($data, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        // Validar los datos de la petición
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric'],
+        ]);
+
+        // Comprobar si hubo un error en la validación
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+
+            return response()->json($data, 400);
+        }
+
+        $service = new Service();
+        $service->name = $request->name;
+        $service->description = $request->description;
+        $service->price = $request->price;
+        $service->save();
+
+        // Validar si no se pudo crear el cliente
+        if (!$service) {
+            $data = [
+                'message' => 'Error al crear el servicio',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
+
+        // Crear la respuesta en una variable $data
+        $data = [
+            'message' => 'Servicio creado con éxito',
+            'service' => $service,
+            'status' => 201
+        ];
+
+        // Devolver la respuesta en formato JSON
+        return response()->json($data, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
     public function show(Service $service)
     {
-        //
+        return response()->json($service);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Service $service)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Service $service)
     {
-        //
+        // Validar los datos de la petición
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'numeric'],
+        ]);
+
+        // Comprobar si hubo un error en la validación
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+
+            return response()->json($data, 400);
+        }
+
+        $service->name = $request->name;
+        $service->description = $request->description;
+        $service->price = $request->price;
+        $service->save();
+
+        // Armamos la respuesta
+        $data = [
+            'message' => 'Cliente actualizado',
+            'cliente' => $service,
+            'status' => 200
+        ];
+
+        // Devolver la respuesta
+        return response()->json($data, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Service $service)
     {
-        //
+        $service->delete();
+
+        // Armar la respuesta
+        $data = [
+            'message' => 'Servicio eliminado',
+            'status' => 200
+        ];
+
+        // Devolver la respuesta
+        return response()->json($data, 200);
     }
 }

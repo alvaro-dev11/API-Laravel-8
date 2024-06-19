@@ -58,12 +58,19 @@ class ClientController extends Controller
         }
 
         // Crear un nuevo cliente
-        $client = Client::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'address' => $request->address
-        ]);
+        // $client = Client::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'phone' => $request->phone,
+        //     'address' => $request->address
+        // ]);
+
+        $client = new Client();
+        $client->name = $request->name;
+        $client->email = $request->email;
+        $client->phone = $request->phone;
+        $client->address = $request->address;
+        $client->save();
 
         // Validar si no se pudo crear el cliente
         if (!$client) {
@@ -85,48 +92,80 @@ class ClientController extends Controller
         return response()->json($data, 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Client $client)
     {
-        //
+        return response()->json($client);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Client $client)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Client $client)
     {
-        //
+        // Validar que no se encontró el client
+        if (!$client) {
+            $data = [
+                'message' => 'Cliente no encontrado',
+                'status' => 404
+            ];
+            return response()->json($data, 404);
+        }
+
+        // Validar los nuevos datos
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'max:255'],
+            'email' => ['required', 'email', 'unique:clients'],
+            'phone' => ['nullable', 'digits:9'],
+            'address' => ['nullable']
+        ]);
+
+        // Comprobar si hubo error en la validación
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+            return response()->json($data, 400);
+        }
+
+        // Actualizamos con los nuevos datos
+        $client->name = $request->name;
+        $client->email = $request->email;
+        $client->phone = $request->phone;
+        $client->address = $request->address;
+        $client->save();
+
+        // Armamos la respuesta
+        $data = [
+            'message' => 'Cliente actualizado',
+            'cliente' => $client,
+            'status' => 200
+        ];
+
+        // Devolver la respuesta
+        return response()->json($data, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Client  $client
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Client $client)
     {
-        //
+        // Validar que no se encontró el client
+        if (!$client) {
+            $data = [
+                'message' => 'Cliente no encontrado',
+                'status' => 404
+            ];
+            return response()->json($data, 404);
+        }
+
+        // Eliminar cliente
+        $client->delete();
+
+        // Armar la respuesta
+        $data = [
+            'message' => 'Cliente eliminado',
+            'status' => 200
+        ];
+
+        // Devolver la respuesta
+        return response()->json($data, 200);
     }
 }
