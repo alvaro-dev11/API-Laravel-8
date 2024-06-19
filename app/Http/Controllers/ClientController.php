@@ -25,14 +25,27 @@ class ClientController extends Controller
             return response()->json($data, 200);
         }
 
+        // Traer todos los clientes junto con sus servicios
+        $array = [];
+        foreach ($clients as $client) {
+            $array[] = [
+                'id' => $client->id,
+                'name' => $client->name,
+                'email' => $client->email,
+                'phone' => $client->phone,
+                'address' => $client->address,
+                'services' => $client->services
+            ];
+        }
+
         // Crear la respuesta en una variable $data
-        $data = [
-            'clients' => $clients,
-            'status' => 200
-        ];
+        // $data = [
+        //     'clients' => $clients,
+        //     'status' => 200
+        // ];
 
         // Devolver la respuesta en formato JSON
-        return response()->json($data, 200);
+        return response()->json($array, 200);
     }
 
     // Lógica para guardar un cliente
@@ -95,7 +108,13 @@ class ClientController extends Controller
 
     public function show(Client $client)
     {
-        return response()->json($client);
+        // Devolver el cliente con todos sus servicios
+        $data = [
+            'message' => 'Detalle del cliente',
+            'client' => $client,
+            'services' => $client->services
+        ];
+        return response()->json($data);
     }
 
     public function update(Request $request, Client $client)
@@ -167,5 +186,32 @@ class ClientController extends Controller
 
         // Devolver la respuesta
         return response()->json($data, 200);
+    }
+
+    // Para insertar un servicio a un cliente
+    // Es decir un cliente puede tener varios servicios
+    public function attach(Request $request)
+    {
+        $client = Client::find($request->client_id);
+        $client->services()->attach($request->service_id);
+        $data = [
+            'message' => 'Servicio agregado con éxito',
+            'client' => $client
+        ];
+
+        return response()->json($data);
+    }
+
+    // Para quitar un servicio a un cliente
+    public function detach(Request $request)
+    {
+        $client = Client::find($request->client_id);
+        $client->services()->detach($request->service_id);
+        $data = [
+            'message' => 'Servicio quitado con éxito',
+            'client' => $client
+        ];
+
+        return response()->json($data);
     }
 }

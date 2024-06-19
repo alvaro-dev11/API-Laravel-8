@@ -33,3 +33,11 @@ Route::post('services', [ServiceController::class, 'store']);
 Route::get('services/{service}', [ServiceController::class, 'show']);
 Route::put('services/{service}', [ServiceController::class, 'update']);
 Route::delete('services/{service}', [ServiceController::class, 'destroy']);
+
+// Ruta para agregar servicios a los clientes
+Route::post('clients/services', [ClientController::class, 'attach']);
+
+// Ruta para quitar servicios a los clientes
+Route::post('clients/services/detach', [ClientController::class, 'detach']);
+
+Route::get('services/clients', [ServiceController::class, 'clients']);

@@ -20,6 +20,8 @@ class Client extends Model
     // Creando relación muchos a muchos con Services
     public function services()
     {
-        return $this->belongsToMany(Service::class);
+        // Error: No encontraba la tabla para agregar el registro
+        // Solución: Agregar como segundo parametro el nombre de la tabla que contien el cliente y el servicio "clients_services"
+        return $this->belongsToMany(Service::class, 'clients_services');
     }
 }
