@@ -9,6 +9,14 @@ class Client extends Model
 {
     use HasFactory;
 
+    // Habilitar la asignación masiva de datos
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'address'
+    ];
+
     // Creando relación muchos a muchos con Services
     public function services()
     {
