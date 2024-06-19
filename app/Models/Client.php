@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
+
+    // Creando relación muchos a muchos con Services
+    public function services()
+    {
+        return $this->belongsToMany(Service::class);
+    }
 }
