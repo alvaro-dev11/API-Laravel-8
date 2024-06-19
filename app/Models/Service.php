@@ -18,6 +18,6 @@ class Service extends Model
     // Creando relación muchos a muchos con Clients
     public function clients()
     {
-        return $this->belongsToMany(Client::class);
+        return $this->belongsToMany(Client::class, 'clients_services');
     }
 }

@@ -40,4 +40,5 @@ Route::post('clients/services', [ClientController::class, 'attach']);
 // Ruta para quitar servicios a los clientes
 Route::post('clients/services/detach', [ClientController::class, 'detach']);
 
-Route::get('services/clients', [ServiceController::class, 'clients']);
+// Ruta para ver a todos los clientes que usan un servicio
+Route::post('services/clients', [ServiceController::class, 'clients']);

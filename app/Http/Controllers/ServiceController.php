@@ -133,4 +133,16 @@ class ServiceController extends Controller
         // Devolver la respuesta
         return response()->json($data, 200);
     }
+
+    // Para ver cuantos clientes hacen uso del servicio
+    public function clients(Request $request)
+    {
+        $service = Service::find($request->service_id);
+        $clients = $service->clients;
+        $data = [
+            'message' => 'Clientes encontrados con éxito',
+            'clients' => $clients
+        ];
+        return response()->json($data);
+    }
 }
